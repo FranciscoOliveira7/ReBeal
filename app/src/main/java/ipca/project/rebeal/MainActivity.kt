@@ -30,4 +30,4 @@ private lateinit var binding: ActivityMainBinding
         navView.setupWithNavController(navController)
     }
 }
-//o goncalo e gay
+    //o Rui é gay
