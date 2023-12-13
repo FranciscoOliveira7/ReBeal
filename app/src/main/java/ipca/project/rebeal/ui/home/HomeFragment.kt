@@ -72,11 +72,8 @@ class HomeFragment : Fragment() {
             val imageView = rootView.findViewById<ImageView>(R.id.imageView)
 
             textViewUserName.text = posts[position].username
-            textViewDescription.text = posts[position].descricao
+            textViewDescription.text = posts[position].description
             textViewDate.text = posts[position].data.toShortDateTime()
-
-
-
 
             return rootView
         }

@@ -10,6 +10,6 @@ fun String.toDate() : Date{
 }
 
 fun Date.toShortDateTime() : String{
-    val format = SimpleDateFormat("EEEE, dd MMM yyyy HH:mm")
+    val format = SimpleDateFormat("dd MMM - HH:mm")
     return format.format(this)
 }
