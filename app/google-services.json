@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "501747321974",
+    "project_id": "rebeal-61d72",
+    "storage_bucket": "rebeal-61d72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501747321974:android:78b2a93973b6014b632357",
+        "android_client_info": {
+          "package_name": "ipca.project.rebeal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrFxHzioUrdLm38q3I-p-4rD0VGOBqP84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
