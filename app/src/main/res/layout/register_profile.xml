@@ -17,8 +17,8 @@
 
     <EditText
         android:id="@+id/editTextEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="211dp"
+        android:layout_height="54dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Email"
@@ -29,8 +29,8 @@
 
     <EditText
         android:id="@+id/editTextPassword_registo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="217dp"
+        android:layout_height="59dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Password"
@@ -41,8 +41,8 @@
 
     <EditText
         android:id="@+id/editTextPassword_registo_confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="215dp"
+        android:layout_height="56dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Confirmar Password"
@@ -63,12 +63,13 @@
 
     <EditText
         android:id="@+id/utilizadorID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="213dp"
+        android:layout_height="57dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Nome De Utilizador"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@+id/Registar"
-        tools:layout_editor_absoluteX="101dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Registar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
