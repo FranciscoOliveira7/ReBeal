@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextEmailAddress_registo"
+        android:id="@+id/editTextEmailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -37,7 +37,7 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmailAddress_registo" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmailAddress" />
 
     <EditText
         android:id="@+id/editTextPassword_registo_confirm"

@@ -30,4 +30,3 @@ private lateinit var binding: ActivityMainBinding
         navView.setupWithNavController(navController)
     }
 }
-//o Rui é gay
