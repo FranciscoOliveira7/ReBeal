@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import ipca.project.rebeal.R
 import ipca.project.rebeal.databinding.FragmentHomeBinding
 import ipca.project.rebeal.ui.Post
@@ -41,6 +44,12 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.ListViewPosts.adapter = postsAdapter
+        binding.buttonLogout.setOnClickListener {
+
+            var auth: FirebaseAuth
+            auth = Firebase.auth
+            auth.signOut()
+        }
 
     }
 

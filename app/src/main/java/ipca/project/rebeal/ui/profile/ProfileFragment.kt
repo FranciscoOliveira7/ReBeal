@@ -1,18 +1,30 @@
 package ipca.project.rebeal.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import ipca.project.rebeal.LoginActivity
+import ipca.project.rebeal.MainActivity
 import ipca.project.rebeal.R
 import ipca.project.rebeal.databinding.FragmentProfileBinding
+import ipca.project.rebeal.databinding.LoginProfileBinding
 import ipca.project.rebeal.ui.Post
 import ipca.project.rebeal.ui.toShortDateTime
 import java.util.Date
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
@@ -37,7 +49,21 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.GridViewProfilePosts.adapter = postsAdapter
+
+       var auth: FirebaseAuth
+            auth = Firebase.auth
+
+        //if (auth.currentUser != null){
+            lifecycleScope.launch (Dispatchers.IO){
+                Thread.sleep(1000L)
+                withContext(Dispatchers.Main){
+                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+       //}
 
     }
 
