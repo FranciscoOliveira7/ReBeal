@@ -1,10 +1,12 @@
 package ipca.project.rebeal.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -17,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import ipca.project.rebeal.R
 import ipca.project.rebeal.databinding.FragmentHomeBinding
+import ipca.project.rebeal.ui.CommentsActivity
 import ipca.project.rebeal.ui.Post
 import ipca.project.rebeal.ui.toShortDateTime
 import java.util.Date
@@ -79,10 +82,16 @@ class HomeFragment : Fragment() {
             val textViewDescription = rootView.findViewById<TextView>(R.id.descricaoID)
             val textViewDate = rootView.findViewById<TextView>(R.id.dataID)
             val imageView = rootView.findViewById<ImageView>(R.id.imageView)
+            val btnComments = rootView.findViewById<Button>(R.id.ComentarioButtonID)
 
             textViewUserName.text = posts[position].username
             textViewDescription.text = posts[position].description
             textViewDate.text = posts[position].data.toShortDateTime()
+
+            btnComments.setOnClickListener {
+                val intent = Intent(requireContext(), CommentsActivity::class.java)
+                startActivity(intent)
+            }
 
             return rootView
         }
