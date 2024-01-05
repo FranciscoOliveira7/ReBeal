@@ -53,7 +53,6 @@ class HomeFragment : Fragment() {
             auth = Firebase.auth
             auth.signOut()
         }
-
     }
 
 

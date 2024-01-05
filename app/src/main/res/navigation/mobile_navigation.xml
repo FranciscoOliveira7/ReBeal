@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_addpost"
+        android:name="ipca.project.rebeal.ui.addpost.AddPostFragment"
+        android:label="@string/title_addpost"
+        tools:layout="@layout/fragment_add_post" />
+
+    <fragment
         android:id="@+id/navigation_profile"
         android:name="ipca.project.rebeal.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
