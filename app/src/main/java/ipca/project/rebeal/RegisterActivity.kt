@@ -10,6 +10,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import ipca.project.rebeal.databinding.RegisterProfileBinding
 import ipca.project.rebeal.ui.isPasswordValid
 import ipca.project.rebeal.ui.isValidEmail
@@ -19,6 +20,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     lateinit var binding: RegisterProfileBinding
+    var firestore = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,6 +28,8 @@ class RegisterActivity : AppCompatActivity() {
 
         binding = RegisterProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         binding.RegistarButton.setOnClickListener {
 
@@ -67,7 +71,7 @@ class RegisterActivity : AppCompatActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         val intent = Intent(this@RegisterActivity, MainActivity::class.java)
 
-                        saveUserToFirebaseDatabase()
+                        saveUserToFirestore()
                         startActivity(intent)
                         finish()
                     } else {
@@ -83,17 +87,25 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveUserToFirebaseDatabase() {
+    private fun saveUserToFirestore() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val username = binding.editTextUserName.text.toString()
 
-        val user = User(uid, binding.editTextUserName.text.toString())
+        val user = hashMapOf(
+            "uid" to uid,
+            "username" to username,
+        )
 
-        ref.setValue(user)
+        firestore.collection("users")
+            .document(uid)
+            .set(user)
             .addOnSuccessListener {
-                Log.d("RegisterActivity", "User saved into the Database")
+                Log.d("RegisterActivity", "User saved to Firestore")
             }
+            .addOnFailureListener {
+                Log.e("RegisterActivity", "Failed to save user to Firestore: ${it.message}")
+            }
+
     }
 
-    class User(val uid: String, val username: String, val profileUrl: String = "")
 }
