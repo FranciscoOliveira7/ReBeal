@@ -30,6 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
             binding.RegistarButton.setOnClickListener {
 
+                val username = binding.utilizadorID.text.toString()
                 val email = binding.editTextEmailAddress.text.toString()
                 val password = binding.editTextPasswordRegisto.text.toString()
                 val password2 = binding.editTextPasswordRegistoConfirm.text.toString()
@@ -66,6 +67,7 @@ class RegisterActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                            intent.putExtra("username", username)
                             startActivity(intent)
                             finish()
                         } else {

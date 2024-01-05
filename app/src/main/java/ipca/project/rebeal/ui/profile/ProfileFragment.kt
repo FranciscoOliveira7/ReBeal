@@ -52,10 +52,17 @@ class ProfileFragment : Fragment() {
 
         binding.GridViewProfilePosts.adapter = postsAdapter
 
-       var auth: FirebaseAuth
-            auth = Firebase.auth
+       var auth: FirebaseAuth = Firebase.auth
 
-        //if (auth.currentUser != null){
+       val username = arguments?.getString("username")
+
+
+        if (username != null) {
+            binding.Utilizador.text = username
+        }
+
+
+        if (auth.currentUser == null){
             lifecycleScope.launch (Dispatchers.IO){
                 Thread.sleep(1000L)
                 withContext(Dispatchers.Main){
@@ -63,7 +70,7 @@ class ProfileFragment : Fragment() {
                     startActivity(intent)
                 }
             }
-       //}
+       }
 
     }
 
