@@ -22,6 +22,7 @@ import java.util.Date
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,29 +50,27 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         binding.GridViewProfilePosts.adapter = postsAdapter
 
-       var auth: FirebaseAuth = Firebase.auth
+        val auth: FirebaseAuth = FirebaseAuth.getInstance()
+        val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-       val username = arguments?.getString("username")
-
-
-        if (username != null) {
-            binding.Utilizador.text = username
-        }
-
-
-        if (auth.currentUser == null){
-            lifecycleScope.launch (Dispatchers.IO){
+        if (auth.currentUser == null) {
+            lifecycleScope.launch(Dispatchers.IO) {
                 Thread.sleep(1000L)
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     val intent = Intent(requireContext(), LoginActivity::class.java)
                     startActivity(intent)
                 }
             }
-       }
-
+        } else {
+            val uid = auth.currentUser?.uid
+            val userDocRef = firestore.collection("users").document(uid!!)
+            userDocRef.get().addOnSuccessListener { documentSnapshot ->
+                val username = documentSnapshot.getString("username")
+                binding.Utilizador.text = username
+            }
+        }
     }
 
     override fun onDestroyView() {
