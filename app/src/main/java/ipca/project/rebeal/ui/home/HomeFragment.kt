@@ -27,6 +27,7 @@ import java.util.Date
 class HomeFragment : Fragment() {
 
     var posts : List<Post> = arrayListOf(
+        Post("Artur", "O Rui é Gay", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "https://en.wikipedia.org/wiki/African_wild_dog", Date()),
         Post("Artur", "O Rui é Gay", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "https://en.wikipedia.org/wiki/African_wild_dog", Date())
     )
     val postsAdapter = PostsListAdapter()

@@ -1,6 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.addpost.AddPostFragment"/>
+    tools:context=".ui.addpost.AddPostFragment">
+
+    <Button
+        android:id="@+id/AdicionarPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adicionar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescricao" />
+
+    <TextView
+        android:id="@+id/UsernameId"
+        android:layout_width="100dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@+id/FotoPerfilId"
+        app:layout_constraintTop_toBottomOf="@+id/FotoPerfilId" />
+
+    <EditText
+        android:id="@+id/editTextDescricao"
+        android:layout_width="214dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Descrição"
+        app:layout_constraintStart_toStartOf="@+id/UsernameId"
+        app:layout_constraintTop_toBottomOf="@+id/UsernameId" />
+
+    <ImageView
+        android:id="@+id/FotoPerfilId"
+        android:layout_width="227dp"
+        android:layout_height="236dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/AdicionarFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        app:layout_constraintBottom_toTopOf="@+id/editTextDescricao"
+        app:layout_constraintEnd_toEndOf="@+id/FotoPerfilId" />
+</androidx.constraintlayout.widget.ConstraintLayout>
