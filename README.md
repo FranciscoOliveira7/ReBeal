@@ -6,7 +6,7 @@
 
 * **Gonçalo Silva** - 25970
 
-* **Rui Costa** - 25959
+* **Rui Bosta** - 25959
 
 ### Objetivo
 
