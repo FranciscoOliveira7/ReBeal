@@ -33,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.RegistarButton.setOnClickListener {
 
-            val username = binding.editTextUserName.text.toString()
             val email = binding.editTextEmailAddress.text.toString()
             val password = binding.editTextPasswordRegisto.text.toString()
             val password2 = binding.editTextPasswordRegistoConfirm.text.toString()
