@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import ipca.project.rebeal.LoginActivity
 import ipca.project.rebeal.MainActivity
 import ipca.project.rebeal.R
@@ -29,10 +31,7 @@ import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
-    var posts : List<Post> = arrayListOf(
-        Post("Artur", "O Rui é Gay", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", Date()),
-        Post("Artur", "O Rui é Gay", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", Date())
-    )
+    val posts: MutableList<Post> = mutableListOf()
     val postsAdapter = PostsListAdapter()
 
     private var _binding: FragmentProfileBinding? = null
@@ -70,6 +69,21 @@ class ProfileFragment : Fragment() {
                 val username = documentSnapshot.getString("username")
                 binding.Utilizador.text = username
             }
+            val userPostsRef = firestore.collection("posts").whereEqualTo("uid", uid)
+
+            userPostsRef.get().addOnSuccessListener { querySnapshot ->
+                posts.clear()
+
+                for (document in querySnapshot) {
+                    val descricao = document.getString("description")
+                    val urlToImage = document.getString("imageUrl")
+
+                    val post = Post("?", descricao, urlToImage, Date())
+                    posts.add(post)
+                }
+
+                postsAdapter.notifyDataSetChanged()
+            }
         }
     }
 
@@ -98,6 +112,12 @@ class ProfileFragment : Fragment() {
             val imageView = rootView.findViewById<ImageView>(R.id.imageViewPost)
 
             textViewDescription.text = posts[position].description
+
+            Glide.with(requireContext())
+                .load(posts[position].urlToImage)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .into(imageView)
+
 
             return rootView
         }
