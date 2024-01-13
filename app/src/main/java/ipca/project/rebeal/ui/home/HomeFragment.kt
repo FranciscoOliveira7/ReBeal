@@ -80,8 +80,10 @@ class HomeFragment : Fragment() {
                     val descricao = document.getString("description")
                     val username = document.getString("username") ?: "Sem Username??"
                     val urlToImage = document.getString("imageUrl")
+                    val timestamp = document.getTimestamp("timestamp")
+                    val date = if (timestamp != null) timestamp.toDate() else Date()
 
-                    Post(username, descricao, "meep", urlToImage, Date())
+                    Post(username, descricao, urlToImage, date)
                 }
 
                 withContext(Dispatchers.Main) {
