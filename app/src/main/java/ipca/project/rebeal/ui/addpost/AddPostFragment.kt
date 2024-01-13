@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.Firebase
@@ -53,6 +54,8 @@ class AddPostFragment : Fragment() {
             uploadImage()
         }
         binding.button.setOnClickListener {
+            if (binding.editTextMultiLine2.text != null)
+                Toast.makeText(requireContext(), "Introduz algo na descrição", Toast.LENGTH_SHORT).show()
             uploadImageToFirebase()
         }
     }
@@ -156,7 +159,7 @@ class AddPostFragment : Fragment() {
                 .into(binding.imageView2)
 
             val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
-            val description = binding.editTextTextMultiLine2.text.toString()
+            val description = binding.editTextMultiLine2.text.toString()
 
             Log.d("Description", "Description: $description")
 
