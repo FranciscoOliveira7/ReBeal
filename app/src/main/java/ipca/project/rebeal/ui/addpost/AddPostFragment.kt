@@ -73,9 +73,7 @@ class AddPostFragment : Fragment() {
         uploadTask.addOnFailureListener {
             callback.invoke(null)
         }.addOnSuccessListener { taskSnapshot ->
-            // Get the download URL of the uploaded image
             photoRef.downloadUrl.addOnSuccessListener { uri ->
-                // Save the URL along with other post details to Firestore, including the description
                 savePostToFirestore(uri.toString(), description, callback)
             }.addOnFailureListener {
                 callback.invoke(null)
@@ -89,31 +87,26 @@ class AddPostFragment : Fragment() {
             val uid = currentUser.uid
             val db = FirebaseFirestore.getInstance()
 
-            // Primeiro, obtemos o nome de usuário correspondente ao UID
             getUsernameFromUid(uid) { username ->
                 if (username != null) {
-                    // Criamos o mapa com os dados do post, incluindo o nome de usuário
                     val post = hashMapOf(
                         "uid" to uid,
                         "username" to username,
                         "imageUrl" to urlImage,
-                        "description" to description
+                        "description" to description,
+                        "timestamp" to System.currentTimeMillis()
                     )
 
-                    // Adicionamos um novo documento com um ID gerado à coleção "posts"
                     db.collection("posts")
                         .add(post)
                         .addOnSuccessListener { documentReference ->
-                            // Chamamos o callback com o ID do documento gerado
                             callback.invoke(documentReference.id)
                         }
                         .addOnFailureListener { e ->
-                            // Lidamos com erros
                             Log.e("Firestore", "Erro ao adicionar documento", e)
                             callback.invoke(null)
                         }
                 } else {
-                    // O nome de usuário não pôde ser obtido
                     callback.invoke(null)
                 }
             }
@@ -125,7 +118,6 @@ class AddPostFragment : Fragment() {
     private fun getUsernameFromUid(uid: String, callback: (username: String?) -> Unit) {
         val db = FirebaseFirestore.getInstance()
 
-        // Obtém o nome de usuário correspondente ao UID da coleção "users"
         db.collection("users")
             .document(uid)
             .get()
@@ -134,7 +126,6 @@ class AddPostFragment : Fragment() {
                 callback.invoke(username)
             }
             .addOnFailureListener {
-                // Lidamos com erros ao obter o nome de usuário
                 callback.invoke(null)
             }
     }
@@ -151,21 +142,15 @@ class AddPostFragment : Fragment() {
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(binding.imageView2)
 
-                // Load the bitmap from the selected image URI
                 val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
-
                 val description = binding.editTextTextMultiLine2.text.toString()
 
-                // Log the description to check its value
                 Log.d("Description", "Description: $description")
 
-                // Call the function to upload the bitmap to Firestore
                 storeBitmap(bitmap, description, false) { filename ->
                     if (filename != null) {
-                        // Upload successful, you can do something with the filename if needed
                         Log.d("Upload", "Image uploaded successfully. Filename: $filename")
                     } else {
-                        // Upload failed, handle the error
                         Log.e("Upload", "Image upload failed.")
                     }
                 }
