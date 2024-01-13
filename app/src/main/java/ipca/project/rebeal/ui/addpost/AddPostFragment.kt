@@ -19,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue.serverTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -34,6 +35,7 @@ class AddPostFragment : Fragment() {
     private var _binding: FragmentAddPostBinding? = null
     private val binding get() = _binding!!
 
+    private var imageUri: Uri?  = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +51,9 @@ class AddPostFragment : Fragment() {
 
         binding.buttonSelectImage.setOnClickListener {
             uploadImage()
+        }
+        binding.button.setOnClickListener {
+            uploadImageToFirebase()
         }
     }
 
@@ -94,7 +99,7 @@ class AddPostFragment : Fragment() {
                         "username" to username,
                         "imageUrl" to urlImage,
                         "description" to description,
-                        "timestamp" to System.currentTimeMillis()
+                        "timestamp" to serverTimestamp()
                     )
 
                     db.collection("posts")
@@ -130,29 +135,36 @@ class AddPostFragment : Fragment() {
             }
     }
 
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
+            imageUri = data?.data
             imageUri?.let {
                 Glide.with(requireContext())
                     .load(it)
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(binding.imageView2)
+            }
+        }
+    }
 
-                val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
-                val description = binding.editTextTextMultiLine2.text.toString()
+    private fun uploadImageToFirebase() {
+        imageUri?.let {
+            Glide.with(requireContext())
+                .load(it)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .into(binding.imageView2)
 
-                Log.d("Description", "Description: $description")
+            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
+            val description = binding.editTextTextMultiLine2.text.toString()
 
-                storeBitmap(bitmap, description, false) { filename ->
-                    if (filename != null) {
-                        Log.d("Upload", "Image uploaded successfully. Filename: $filename")
-                    } else {
-                        Log.e("Upload", "Image upload failed.")
-                    }
+            Log.d("Description", "Description: $description")
+
+            storeBitmap(bitmap, description, false) { filename ->
+                if (filename != null) {
+                    Log.d("Upload", "Image uploaded successfully. Filename: $filename")
+                } else {
+                    Log.e("Upload", "Image upload failed.")
                 }
             }
         }
