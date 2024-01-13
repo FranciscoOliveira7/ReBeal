@@ -59,7 +59,7 @@ class AddPostFragment : Fragment() {
         startActivityForResult(intent, 1)
     }
 
-    fun storeBitmap(bitmap: Bitmap, isMap: Boolean, callback: (filename: String?) -> Unit) {
+    fun storeBitmap(bitmap: Bitmap,description: String, isMap: Boolean, callback: (filename: String?) -> Unit) {
         val storage = Firebase.storage
         val storageRef = storage.reference
         val filename = (if (isMap) "map_" else "") + UUID.randomUUID().toString() + ".jpg"
@@ -75,15 +75,15 @@ class AddPostFragment : Fragment() {
         }.addOnSuccessListener { taskSnapshot ->
             // Get the download URL of the uploaded image
             photoRef.downloadUrl.addOnSuccessListener { uri ->
-                // Save the URL along with other post details to Firestore
-                savePostToFirestore(uri.toString(), callback)
+                // Save the URL along with other post details to Firestore, including the description
+                savePostToFirestore(uri.toString(), description, callback)
             }.addOnFailureListener {
                 callback.invoke(null)
             }
         }
     }
 
-    private fun savePostToFirestore(urlImage: String, callback: (filename: String?) -> Unit) {
+    private fun savePostToFirestore(urlImage: String, description: String, callback: (filename: String?) -> Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             val uid = currentUser.uid
@@ -91,10 +91,11 @@ class AddPostFragment : Fragment() {
             val post = hashMapOf(
                 "uid" to uid,
                 "imageUrl" to urlImage,
+                "description" to description
             )
 
             // Add a new document with a generated ID to the "Posts" collection
-            db.collection("images")
+            db.collection("posts")
                 .add(post)
                 .addOnSuccessListener { documentReference ->
                     // Callback with the generated document ID
@@ -126,11 +127,14 @@ class AddPostFragment : Fragment() {
                 // Load the bitmap from the selected image URI
                 val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
 
+                val description = binding.editTextTextMultiLine2.text.toString()
+
+                // Log the description to check its value
+                Log.d("Description", "Description: $description")
+
                 // Call the function to upload the bitmap to Firestore
-                storeBitmap(bitmap, false) { filename ->
+                storeBitmap(bitmap, description, false) { filename ->
                     if (filename != null) {
-
-
                         // Upload successful, you can do something with the filename if needed
                         Log.d("Upload", "Image uploaded successfully. Filename: $filename")
                     } else {
