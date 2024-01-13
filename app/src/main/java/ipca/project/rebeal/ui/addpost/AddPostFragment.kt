@@ -88,29 +88,56 @@ class AddPostFragment : Fragment() {
         if (currentUser != null) {
             val uid = currentUser.uid
             val db = FirebaseFirestore.getInstance()
-            val post = hashMapOf(
-                "uid" to uid,
-                "imageUrl" to urlImage,
-                "description" to description
-            )
 
-            // Add a new document with a generated ID to the "Posts" collection
-            db.collection("posts")
-                .add(post)
-                .addOnSuccessListener { documentReference ->
-                    // Callback with the generated document ID
-                    callback.invoke(documentReference.id)
-                }
-                .addOnFailureListener { e ->
-                    // Handle errors
-                    Log.e("Firestore", "Error adding document", e)
+            // Primeiro, obtemos o nome de usuário correspondente ao UID
+            getUsernameFromUid(uid) { username ->
+                if (username != null) {
+                    // Criamos o mapa com os dados do post, incluindo o nome de usuário
+                    val post = hashMapOf(
+                        "uid" to uid,
+                        "username" to username,
+                        "imageUrl" to urlImage,
+                        "description" to description
+                    )
+
+                    // Adicionamos um novo documento com um ID gerado à coleção "posts"
+                    db.collection("posts")
+                        .add(post)
+                        .addOnSuccessListener { documentReference ->
+                            // Chamamos o callback com o ID do documento gerado
+                            callback.invoke(documentReference.id)
+                        }
+                        .addOnFailureListener { e ->
+                            // Lidamos com erros
+                            Log.e("Firestore", "Erro ao adicionar documento", e)
+                            callback.invoke(null)
+                        }
+                } else {
+                    // O nome de usuário não pôde ser obtido
                     callback.invoke(null)
                 }
+            }
         } else {
             callback.invoke(null)
         }
     }
 
+    private fun getUsernameFromUid(uid: String, callback: (username: String?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        // Obtém o nome de usuário correspondente ao UID da coleção "users"
+        db.collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { userDocument ->
+                val username = userDocument.getString("username")
+                callback.invoke(username)
+            }
+            .addOnFailureListener {
+                // Lidamos com erros ao obter o nome de usuário
+                callback.invoke(null)
+            }
+    }
 
 
 
