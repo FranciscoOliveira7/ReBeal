@@ -54,9 +54,10 @@ class AddPostFragment : Fragment() {
             uploadImage()
         }
         binding.button.setOnClickListener {
-            if (binding.editTextMultiLine2.text != null)
+            if (binding.editTextMultiLine2.text.toString() != "")
                 Toast.makeText(requireContext(), "Introduz algo na descrição", Toast.LENGTH_SHORT).show()
-            uploadImageToFirebase()
+            else
+                uploadImageToFirebase()
         }
     }
 
