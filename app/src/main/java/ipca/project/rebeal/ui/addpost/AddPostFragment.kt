@@ -28,6 +28,8 @@ import ipca.project.rebeal.R
 import ipca.project.rebeal.databinding.FragmentAddPostBinding
 import ipca.project.rebeal.databinding.FragmentHomeBinding
 import ipca.project.rebeal.databinding.FragmentProfileBinding
+import ipca.project.rebeal.ui.CommentsActivity
+import ipca.project.rebeal.ui.home.HomeFragment
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 
@@ -56,8 +58,11 @@ class AddPostFragment : Fragment() {
         binding.button.setOnClickListener {
             if (binding.editTextMultiLine2.text.toString() == "")
                 Toast.makeText(requireContext(), "Introduz algo na descrição", Toast.LENGTH_SHORT).show()
-            else
+            else {
                 uploadImageToFirebase()
+
+            }
+
         }
     }
 
@@ -167,8 +172,13 @@ class AddPostFragment : Fragment() {
             storeBitmap(bitmap, description, false) { filename ->
                 if (filename != null) {
                     Log.d("Upload", "Image uploaded successfully. Filename: $filename")
+
+                    binding.editTextMultiLine2.text.clear()
+
+                    Toast.makeText(requireContext(), "Postagem bem-sucedida!", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.e("Upload", "Image upload failed.")
+                    Toast.makeText(requireContext(), "Erro ao fazer a postagem", Toast.LENGTH_SHORT).show()
                 }
             }
         }
