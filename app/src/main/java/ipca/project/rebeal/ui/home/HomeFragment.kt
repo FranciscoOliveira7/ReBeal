@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -65,6 +67,46 @@ class HomeFragment : Fragment() {
         loadPostsFromFirebase()
     }
 
+    private suspend fun addLikeToPost(postId: String) {
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val username = getUsernameFromUid(userId)
+
+            if (username != null) {
+                val likeData = hashMapOf(
+                    "userId" to userId,
+                    "username" to username
+                )
+
+                db.collection("posts")
+                    .document(postId)
+                    .collection("likes")
+                    .add(likeData)
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "Like adicionado ao post com sucesso.")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "Erro ao adicionar like ao post", e)
+                    }
+            }
+        }
+    }
+
+    private suspend fun getUsernameFromUid(uid: String): String? {
+        val db = FirebaseFirestore.getInstance()
+
+        return try {
+            val userDocument = db.collection("users").document(uid).get().await()
+            userDocument.getString("username")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
     private fun loadPostsFromFirebase() {
         val db = FirebaseFirestore.getInstance()
 
@@ -75,25 +117,13 @@ class HomeFragment : Fragment() {
                     .await()
 
                 val postsFromFirestore = postsResult.documents.map { document ->
-                    val query = db.collection("likes")
-                        .whereEqualTo("post", document.id)
-                    val queryCount = query.count()
                     var likes = 0
-                    queryCount.get(AggregateSource.SERVER).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Count fetched successfully
-                            likes = task.result.count.toInt()
-                        } else {
-                            Toast.makeText(requireContext(), "Count failed: ", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
                     val descricao = document.getString("description")
                     val username = document.getString("username") ?: "Sem Username??"
                     val urlToImage = document.getString("imageUrl")
                     val date = document.getTimestamp("timestamp")?.toDate() ?: Date()
 
-                    Post(username, descricao, urlToImage, date, likes)
+                    Post(document.id, username, descricao, urlToImage, date, likes)
                 }
 
                 withContext(Dispatchers.Main) {
@@ -135,6 +165,7 @@ class HomeFragment : Fragment() {
             val imageView = rootView.findViewById<ImageView>(R.id.imageView)
             val btnComments = rootView.findViewById<Button>(R.id.ComentarioButtonID)
             val likes = rootView.findViewById<TextView>(R.id.textViewLikes)
+            val btnLikes = rootView.findViewById<ImageButton>(R.id.LikeButtonID)
 
             val boldUsername = SpannableString(posts[position].username)
             boldUsername.setSpan(StyleSpan(Typeface.BOLD), 0, boldUsername.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -152,6 +183,12 @@ class HomeFragment : Fragment() {
             btnComments.setOnClickListener {
                 val intent = Intent(requireContext(), CommentsActivity::class.java)
                 startActivity(intent)
+            }
+
+            btnLikes.setOnClickListener {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    addLikeToPost(posts[position].postId)
+                }
             }
 
             return rootView

@@ -75,11 +75,13 @@ class ProfileFragment : Fragment() {
                 posts.clear()
 
                 for (document in querySnapshot) {
+                    val postId = document.id
+                    val username = document.getString("username") ?: "?"
                     val descricao = document.getString("description")
                     val urlToImage = document.getString("imageUrl")
                     val date = document.getTimestamp("timestamp")?.toDate() ?: Date()
 
-                    val post = Post("?", descricao, urlToImage, date, 0)
+                    val post = Post(postId, username,descricao, urlToImage, date, 0)
                     posts.add(post)
                 }
 

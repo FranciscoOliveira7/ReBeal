@@ -20,6 +20,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FieldValue.serverTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -108,12 +109,14 @@ class AddPostFragment : Fragment() {
                         "username" to username,
                         "imageUrl" to urlImage,
                         "description" to description,
-                        "timestamp" to serverTimestamp()
+                        "timestamp" to FieldValue.serverTimestamp()
                     )
 
                     db.collection("posts")
                         .add(post)
                         .addOnSuccessListener { documentReference ->
+                            // Adiciona a coleção "likes" dentro do documento de post
+                            addLikesCollectionToPost(documentReference.id,username)
                             callback.invoke(documentReference.id)
                         }
                         .addOnFailureListener { e ->
@@ -127,6 +130,23 @@ class AddPostFragment : Fragment() {
         } else {
             callback.invoke(null)
         }
+    }
+
+    private fun addLikesCollectionToPost(postId: String, username: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        val likesCollection = db.collection("posts").document(postId).collection("likes")
+        val likeData = hashMapOf(
+            "username" to username,
+        )
+
+        likesCollection.add(likeData)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Coleção 'likes' adicionada ao post com sucesso.")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Erro ao adicionar coleção 'likes' ao post", e)
+            }
     }
 
     private fun getUsernameFromUid(uid: String, callback: (username: String?) -> Unit) {
