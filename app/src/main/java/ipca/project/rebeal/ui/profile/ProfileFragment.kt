@@ -79,7 +79,7 @@ class ProfileFragment : Fragment() {
                     val urlToImage = document.getString("imageUrl")
                     val date = document.getTimestamp("timestamp")?.toDate() ?: Date()
 
-                    val post = Post("?", descricao, urlToImage, date)
+                    val post = Post("?", descricao, urlToImage, date, 0)
                     posts.add(post)
                 }
 

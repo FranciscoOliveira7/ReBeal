@@ -16,12 +16,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import ipca.project.rebeal.R
 import ipca.project.rebeal.databinding.FragmentHomeBinding
@@ -75,12 +75,25 @@ class HomeFragment : Fragment() {
                     .await()
 
                 val postsFromFirestore = postsResult.documents.map { document ->
+                    val query = db.collection("likes")
+                        .whereEqualTo("post", document.id)
+                    val queryCount = query.count()
+                    var likes = 0
+                    queryCount.get(AggregateSource.SERVER).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Count fetched successfully
+                            likes = task.result.count.toInt()
+                        } else {
+                            Toast.makeText(requireContext(), "Count failed: ", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
                     val descricao = document.getString("description")
                     val username = document.getString("username") ?: "Sem Username??"
                     val urlToImage = document.getString("imageUrl")
                     val date = document.getTimestamp("timestamp")?.toDate() ?: Date()
 
-                    Post(username, descricao, urlToImage, date)
+                    Post(username, descricao, urlToImage, date, likes)
                 }
 
                 withContext(Dispatchers.Main) {
@@ -121,6 +134,7 @@ class HomeFragment : Fragment() {
             val textViewDate = rootView.findViewById<TextView>(R.id.dataID)
             val imageView = rootView.findViewById<ImageView>(R.id.imageView)
             val btnComments = rootView.findViewById<Button>(R.id.ComentarioButtonID)
+            val likes = rootView.findViewById<TextView>(R.id.textViewLikes)
 
             val boldUsername = SpannableString(posts[position].username)
             boldUsername.setSpan(StyleSpan(Typeface.BOLD), 0, boldUsername.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -128,6 +142,7 @@ class HomeFragment : Fragment() {
             textViewUserName.text = boldUsername
             textViewDescription.text = posts[position].description
             textViewDate.text = posts[position].data.toShortDateTime()
+            likes.text = posts[position].likes.toString()
 
             Glide.with(requireContext())
                 .load(posts[position].urlToImage)

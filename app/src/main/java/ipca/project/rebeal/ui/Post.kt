@@ -8,21 +8,5 @@ data class Post (
     var description : String?,
     var urlToImage : String?,
     var data : Date,
- ) {
-    companion object{
-        fun fromJson ( jsonObject: JSONObject) : Post {
-            val username = jsonObject["username"] as String
-            val description = jsonObject["description"] as String
-            val urlToImage = jsonObject ["urlToImage"] as String
-            val data = (jsonObject["data"] as String).toDate()
-
-            return Post(
-                username,
-                description,
-                urlToImage,
-                data
-            )
-        }
-    }
-}
-
+    var likes : Int
+)
