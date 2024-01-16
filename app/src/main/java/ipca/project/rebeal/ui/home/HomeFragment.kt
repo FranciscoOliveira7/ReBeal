@@ -67,23 +67,18 @@ class HomeFragment : Fragment() {
         loadPostsFromFirebase()
     }
 
-    private suspend fun addLikeToPost(postId: String) {
+    private fun addLikeToPost(postId: String) {
         val db = FirebaseFirestore.getInstance()
         val currentUser = FirebaseAuth.getInstance().currentUser
 
         if (currentUser != null) {
-            val userId = currentUser.uid
-            val username = getUsernameFromUid(userId)
-
-            if (username != null) {
+            if (!checkIfLiked(postId)) {
                 val likeData = hashMapOf(
-                    "userId" to userId,
-                    "username" to username
+                    "user" to currentUser.uid,
+                    "post" to postId,
                 )
 
-                db.collection("posts")
-                    .document(postId)
-                    .collection("likes")
+                db.collection("likes")
                     .add(likeData)
                     .addOnSuccessListener {
                         Log.d("Firestore", "Like adicionado ao post com sucesso.")
@@ -95,22 +90,31 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private suspend fun getUsernameFromUid(uid: String): String? {
+    private fun checkIfLiked(postId: String) : Boolean {
         val db = FirebaseFirestore.getInstance()
+        val currentUser = FirebaseAuth.getInstance().currentUser
 
-        return try {
-            val userDocument = db.collection("users").document(uid).get().await()
-            userDocument.getString("username")
-        } catch (e: Exception) {
-            null
+        var likes = 0
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            val likesResult = db.collection("likes")
+                .whereEqualTo("post", postId)
+                .whereEqualTo("user", currentUser!!.uid)
+                .get()
+                .await()
+
+            likesResult.documents.map {
+                likes++
+            }
         }
+        return likes > 0
     }
-
 
     private fun loadPostsFromFirebase() {
         val db = FirebaseFirestore.getInstance()
 
         lifecycleScope.launch(Dispatchers.IO) {
+
             try {
                 val postsResult = db.collection("posts")
                     .get()
@@ -118,6 +122,15 @@ class HomeFragment : Fragment() {
 
                 val postsFromFirestore = postsResult.documents.map { document ->
                     var likes = 0
+                    val likesResult = db.collection("likes")
+                        .whereEqualTo("post", document.id)
+                        .get()
+                        .await()
+
+                    likesResult.documents.map {
+                        likes++
+                    }
+
                     val descricao = document.getString("description")
                     val username = document.getString("username") ?: "Sem Username??"
                     val urlToImage = document.getString("imageUrl")
