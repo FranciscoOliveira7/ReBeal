@@ -1,5 +1,7 @@
 # Desenvolvimento de Jogos para Plataformas Móveis | ReBeal
 
+O ReBeal é uma rede social inspirada no BeReal usando o Kotlin como linguagem de programação e Android SDK. A aplicação contem um sistema simples de utilizar com 3 atividades principais onde podemos visualizar os posts de outras pessoas, adicionar um post novo e ver os nossos posts já feitos no nosso perfil.
+
 ---
 
 ## Trabalho realizado por:
@@ -14,19 +16,25 @@
 
 - Objetivos
 
-- "Actual Features" (Objetivos compridos)
-
 - Implementação de Firebase em Android
 
 - Classes / Activities 
 
+- Instalação
+
 ## Objetivos
+
+### Iniciais
 
 Este projeto tem como objetivo criar uma rede social à base de posts.
 
 Os posts contêm uma imagem e um breve comentário, tal como um botão de like e de comentar.
 
-##### Layout da Aplicação
+
+
+
+
+### Layout da Aplicação
 
 | 🏠 Feed                                                                           | 📷 Adicionar Post           | 👤 Perfil                                                                          |
 |:---------------------------------------------------------------------------------:|:---------------------------:|:----------------------------------------------------------------------------------:|
@@ -35,9 +43,7 @@ Os posts contêm uma imagem e um breve comentário, tal como um botão de like e
 
 ## Implementação de Firebase em Android
 
----
-
-### Importação do Firebase para o projeto
+### Importação
 
 #### Gradle
 
@@ -72,7 +78,7 @@ Autenticação
 Firestore (Base de dados flexivél)
 `import com.google.firebase.firestore.FirebaseFirestore`
 
-### Utilização de Firebase no projeto
+### Utilização
 
 Verificar autenticação do utilizador
 
@@ -95,3 +101,9 @@ if (auth.currentUser == null) {
     }
 }
 ```
+
+## Instalação do ReBeal
+
+1. Efetuar um clone do repositório git: https://github.com/Sincopse/ReBeal
+
+2. Abrir o projeto no Android Studio e compilar no dispositivo desejado (hardware / emulador).
