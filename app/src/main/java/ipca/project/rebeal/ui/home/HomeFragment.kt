@@ -77,15 +77,7 @@ class HomeFragment : Fragment() {
                     "user" to currentUser.uid,
                     "post" to postId,
                 )
-
-                db.collection("likes")
-                    .add(likeData)
-                    .addOnSuccessListener {
-                        Log.d("Firestore", "Like adicionado ao post com sucesso.")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("Firestore", "Erro ao adicionar like ao post", e)
-                    }
+                db.collection("likes").add(likeData)
             }
         }
     }
@@ -95,8 +87,9 @@ class HomeFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
         var likes = 0
-        lifecycleScope.launch(Dispatchers.IO) {
+        var checkCounter = true
 
+        lifecycleScope.launch(Dispatchers.IO) {
             val likesResult = db.collection("likes")
                 .whereEqualTo("post", postId)
                 .whereEqualTo("user", currentUser!!.uid)
@@ -106,6 +99,10 @@ class HomeFragment : Fragment() {
             likesResult.documents.map {
                 likes++
             }
+            checkCounter = false
+        }
+        while (checkCounter) {
+            continue
         }
         return likes > 0
     }
@@ -121,15 +118,12 @@ class HomeFragment : Fragment() {
                     .await()
 
                 val postsFromFirestore = postsResult.documents.map { document ->
-                    var likes = 0
                     val likesResult = db.collection("likes")
                         .whereEqualTo("post", document.id)
                         .get()
                         .await()
 
-                    likesResult.documents.map {
-                        likes++
-                    }
+                    val likes = likesResult.documents.size
 
                     val descricao = document.getString("description")
                     val username = document.getString("username") ?: "Sem Username??"
